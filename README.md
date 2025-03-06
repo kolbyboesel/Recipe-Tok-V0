@@ -50,7 +50,7 @@ RecipeTok is a dynamic recipe discovery platform where users can explore, filter
 The initial recipe dataset was sourced from **Kaggle**, specifically:  
 📌 **[Food.com Recipes and User Interactions](https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions)**  
 
-- This dataset contains **over 230,000 recipes** with attributes such as:
+- This dataset contains **over 230,000 recipes** total with attributes such as:
   - Recipe name
   - Ingredients list
   - Cooking steps
@@ -58,4 +58,4 @@ The initial recipe dataset was sourced from **Kaggle**, specifically:
   - Cooking time
   - Tags and metadata  
 
-🔹 The dataset was processed and stored in **MongoDB** to power RecipeTok’s search and filtering functionalities.
+🔹 The dataset is stored in **MongoDB** to power RecipeTok’s search and filtering functionalities.
