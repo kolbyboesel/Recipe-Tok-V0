@@ -1,65 +1,57 @@
-import React, { useEffect, useState } from "react";
-import { useGlobalContext } from "../GlobalContext";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import Spinner from './LoadingSpinner';
 
-const RecipeList = () => {
-    const { searchTerm } = useGlobalContext();
-    const [meals, setMeals] = useState([]);
+const RecipeList = ({ meals }) => {
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchMeals = async () => {
-            setIsLoading(true);
-            try {
-                const response = await fetch(
-                    `https://www.themealdb.com/api/json/v1/1/filter.php?c=${searchTerm}`
-                );
-                const data = await response.json();
-                setMeals(data.meals || []);
-            } catch (error) {
-                console.error("Error fetching meals:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchMeals();
-    }, [searchTerm]);
-
-    const handleCardClick = (idMeal) => {
-        navigate(`/recipe/${idMeal}`);
+    const handleCardClick = (id) => {
+        navigate(`/recipe/${id}`);
     };
 
     return (
-        <>
-            {isLoading ? (
-                <Spinner />
-            ) : (
-                <div className="meals-container">
-                    {meals.length > 0 ? (
-                        meals.map((meal) => (
-                            <div
-                                key={meal.idMeal}
-                                className="meal-card"
-                                onClick={() => handleCardClick(meal.idMeal)}
-                                style={{ cursor: "pointer" }}
-                            >
-                                <img
-                                    src={meal.strMealThumb}
-                                    alt={meal.strMeal}
-                                    className="meal-image"
-                                />
-                                <p className="meal-name">{meal.strMeal}</p>
+        <div className="meals-container">
+            {meals && meals.length > 0 ? (
+                meals.map((meal) => {
+                    // Convert stringified arrays to actual arrays
+                    const tags = meal.tags ? JSON.parse(meal.tags.replace(/'/g, '"')) : [];
+
+                    return (
+                        <div
+                            key={meal.id}
+                            className="meal-card"
+                            onClick={() => handleCardClick(meal.id)}
+                            style={{ cursor: "pointer" }}
+                        >
+                            {/* Recipe Name */}
+                            <h3 className="meal-name">{meal.name || "Unnamed Recipe"}</h3>
+
+                            <div className="filter-container justify-center">
+                                {/* Cook Time */}
+                                <p className="meal-info"><strong>Cook Time:</strong> {meal.minutes || "N/A"} min</p>
+
+                                {/* Number of Ingredients */}
+                                <p className="meal-info"><strong>Ingredients:</strong> {meal.numberOfIngredients || "N/A"}</p>
+
+                                {/* Number of Steps */}
+                                <p className="meal-info"><strong>Steps:</strong> {meal.numberOfSteps || "N/A"}</p>
                             </div>
-                        ))
-                    ) : (
-                        <p>No meals found for "{searchTerm}"</p>
-                    )}
-                </div>
+                            {/* Tags Section */}
+                            <div className="meal-tags">
+                                {tags.length > 0 ? (
+                                    tags.map((tag, index) => (
+                                        <span key={index} className="recipe-tag">{tag}</span>
+                                    ))
+                                ) : (
+                                    <span className="recipe-tag no-tags">No Tags</span>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })
+            ) : (
+                <p className="no-recipes">No meals found.</p>
             )}
-        </>
+        </div>
     );
 };
 

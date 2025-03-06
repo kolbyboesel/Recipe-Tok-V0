@@ -7,7 +7,7 @@ import RecipeTokNavbar from './components/RecipeTokNavbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Cookbook from './pages/Cookbook';
-import RecipeDetails from "./pages/RecipeDetails";
+import RecipeDetails from "./components/RecipeDetails";
 import Account from "./pages/Account";
 import AddRecipe from "./pages/AddRecipe";
 import Login from "./pages/AccountFunctions/Login";

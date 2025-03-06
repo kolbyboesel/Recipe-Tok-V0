@@ -51,7 +51,7 @@
     margin: 5% auto;
     border: 1px solid #888 !important;
     border-radius: var(--container-border-radius);
-    width: 50%;
+    width: 100%;
   }
 
 .modal-content h2 {

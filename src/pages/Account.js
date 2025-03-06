@@ -3,10 +3,13 @@ import { UserSettingsContext } from '../../src/components/UserSettings';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaPlusCircle } from 'react-icons/fa';
+import MealsList from "../components/RecipeList";
 
 const Account = () => {
   const { updateUserSettings, userSettings } = useContext(UserSettingsContext);
   const navigate = useNavigate();
+  const [favoriteRecipes, setFavoriteRecipes] = useState([]);
+  const [customRecipes, setCustomRecipes] = useState([]);
 
   const [settings, setSettings] = useState({
     loginID: '',
@@ -18,6 +21,8 @@ const Account = () => {
   useEffect(() => {
     if (userSettings) {
       setSettings(userSettings);
+      setFavoriteRecipes(userSettings.favoriteRecipes);
+      setCustomRecipes(userSettings.customRecipes);
     }
   }, [userSettings]);
 
@@ -71,29 +76,17 @@ const Account = () => {
       {/* Favorite Recipes */}
       <div className="page-content-container">
         <h3>Favorite Recipes</h3>
-        <div className="meals-container">
-          {/* Placeholder Recipe (Replace with actual saved recipes) */}
-          <div className="meal-card">
-            <img src="https://via.placeholder.com/150" alt="Recipe 1" className="meal-image" />
-            <p className="meal-name">Sample Recipe</p>
-          </div>
-        </div>
+        <MealsList meals={favoriteRecipes} />
       </div>
       <br></br>
 
-      {/* Favorite Recipes */}
+      {/* Custom Recipes */}
       <div className="page-content-container">
         <div className="login-cancel">
           <h3>Custom Recipes</h3>
           <button className="add-recipe-btn" onClick={handleAddRecipe}><FaPlusCircle size={24} /></button>
         </div>
-        <div className="meals-container">
-          {/* Placeholder Recipe (Replace with actual saved recipes) */}
-          <div className="meal-card">
-            <img src="https://via.placeholder.com/150" alt="Recipe 1" className="meal-image" />
-            <p className="meal-name">Sample Recipe</p>
-          </div>
-        </div>
+        <MealsList meals={customRecipes} />
       </div>
     </div>
   );
