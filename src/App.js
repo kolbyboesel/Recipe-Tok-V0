@@ -1,7 +1,7 @@
 import './styles/App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
-import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { GlobalProvider } from "./GlobalContext";
 import RecipeTokNavbar from './components/RecipeTokNavbar';
 import Footer from './components/Footer';
