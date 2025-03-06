@@ -25,6 +25,9 @@ const ChangePassword = () => {
     });
   };
 
+  const handleCancel = () => {
+    navigate('/AddRecipe');
+  };
   const handleChangeSubmit = async (e) => {
     e.preventDefault();
     setConfirmPressed(true);
@@ -112,9 +115,9 @@ const ChangePassword = () => {
         </div>
 
         <div className="container pb-5 pt-3 login-cancel">
-          <a href="/Account" className="cancelbtn" style={{ borderRadius: '5px' }}>
+          <button onClick={handleCancel} className="bg-red" style={{ borderRadius: '5px' }}>
             Cancel
-          </a>
+          </button>
         </div>
       </form>
     </div>
