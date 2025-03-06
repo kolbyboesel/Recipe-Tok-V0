@@ -41,7 +41,7 @@ const Footer = () => {
                     rel="noopener noreferrer"
                     aria-label="X"
                 >
-                    <FaTwitter />
+                    <FaTwitter size={24} />
                 </a>
             </div>
             <p>Site Last Updated: 3/6/2025</p>

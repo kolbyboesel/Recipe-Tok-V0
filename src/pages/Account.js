@@ -1,0 +1,102 @@
+import React, { useContext, useEffect, useState } from 'react';
+import { UserSettingsContext } from '../../src/components/UserSettings';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { FaPlusCircle } from 'react-icons/fa';
+
+const Account = () => {
+  const { updateUserSettings, userSettings } = useContext(UserSettingsContext);
+  const navigate = useNavigate();
+
+  const [settings, setSettings] = useState({
+    loginID: '',
+    firstName: '',
+    lastName: '',
+    isLoggedIn: false
+  });
+
+  useEffect(() => {
+    if (userSettings) {
+      setSettings(userSettings);
+    }
+  }, [userSettings]);
+
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
+
+    if (confirmDelete) {
+      try {
+        const response = await axios.delete(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/RecipeTokUserSettings/delete/${settings.loginID}`);
+        if (response.status === 200) {
+          alert('Your account has been successfully deleted.');
+          updateUserSettings({
+            loginID: 'defaultUser',
+            firstName: 'John',
+            lastName: 'Doe',
+            isLoggedIn: false
+          });
+          localStorage.removeItem('userSettings');
+          navigate('/');
+          window.location.reload();
+        } else {
+          alert('Error deleting account: ' + response.data);
+        }
+      } catch (error) {
+        console.error('Error deleting account:', error);
+        alert('An error occurred. Please try again later.');
+      }
+    }
+  };
+
+  const handleChangePassword = () => {
+    navigate('/ChangePassword');
+  };
+
+  const handleAddRecipe = () => {
+    navigate('/AddRecipe');
+  };
+
+  return (
+    <div className="container page">
+      {/* Profile Section */}
+      <div className="page-content-container">
+        <h2>Welcome, {settings.firstName || 'N/A'}!</h2>
+        <div className="container text-center">
+          <button className='m-3' onClick={handleChangePassword}>Change Password</button>
+          <button className="bg-red m-3" onClick={handleDeleteAccount}>Delete Account</button>
+        </div>
+      </div>
+      <br></br>
+
+      {/* Favorite Recipes */}
+      <div className="page-content-container">
+        <h3>Favorite Recipes</h3>
+        <div className="meals-container">
+          {/* Placeholder Recipe (Replace with actual saved recipes) */}
+          <div className="meal-card">
+            <img src="https://via.placeholder.com/150" alt="Recipe 1" className="meal-image" />
+            <p className="meal-name">Sample Recipe</p>
+          </div>
+        </div>
+      </div>
+      <br></br>
+
+      {/* Favorite Recipes */}
+      <div className="page-content-container">
+        <div className="login-cancel">
+          <h3>Custom Recipes</h3>
+          <button className="add-recipe-btn" onClick={handleAddRecipe}><FaPlusCircle size={24} /></button>
+        </div>
+        <div className="meals-container">
+          {/* Placeholder Recipe (Replace with actual saved recipes) */}
+          <div className="meal-card">
+            <img src="https://via.placeholder.com/150" alt="Recipe 1" className="meal-image" />
+            <p className="meal-name">Sample Recipe</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Account;

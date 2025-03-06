@@ -1,0 +1,118 @@
+:root {
+    --page-bg-color: #ffffff;
+    --page-theme-color: #015F41;
+    --container-bg-color: #f0f0f0;
+    --container-border-radius: 10px;
+    --container-darker-color: #9c9c9c;
+    --primary-text-color: #333;
+    --primary-text-hover-color: #000000;
+    --nav-bg-color: #f0f0f0;
+    --nav-text-color: #015F41;
+    --nav-text-hover-color: #333;
+    --btn-bg-color: #015F41;
+    --btn-bg-hover-color: #029a69;
+    --btn-text-color: #ffffff;
+  }
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; 
+    padding: 5%;
+}
+
+/* Modal Content */
+.modal-content-container {
+    display: grid;
+    max-width: 100%;
+    height: 100%;
+  }
+
+.modal {
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding-top: 60px;
+  }
+  
+  .modal-content {
+    background-color: var(--container-bg-color) !important;
+    margin: 5% auto;
+    border: 1px solid #888 !important;
+    border-radius: var(--container-border-radius);
+    width: 50%;
+  }
+
+.modal-content h2 {
+    margin-bottom: 10px;
+    color: var(--primary-text-color);
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+    color: black;
+
+}
+
+.modal-content button {
+    padding: 10px 20px;
+    background-color: var(--btn-bg-color); /* Red button */
+    color: var(--btn-text-color);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.modal-content button:hover {
+    background-color: var(--btn-bg-hover-color); /* Darker red on hover */
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+.cancelbtn {
+    width: fit-content;
+    color: white;
+    padding: 10px 18px;
+    background-color: #f44336;
+    align-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    border-radius: var(--container-border-radius) !important;
+  }
+  
+  .cancelbtn:hover {
+    opacity: 0.8;
+  }
+
+  .login-cancel {
+    display: flex;
+    justify-content: space-between; /* Push the Cancel button to the left and the span to the right */
+    align-items: center; /* Ensure both elements are vertically aligned */
+  }

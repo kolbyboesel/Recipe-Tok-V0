@@ -1,14 +1,18 @@
 :root {
-    --page-bg-color: #ffffff;
-    --page-theme-color: #015F41;
-    --container-bg-color: #f0f0f0;
-    --container-darker-color: #9c9c9c;
-    --primary-text-color: #333;
-    --primary-text-hover-color: #000000;
-    --nav-bg-color: #f0f0f0;
-    --nav-text-color: #015F41;
-    --nav-text-hover-color: #333;
-  }
+  --page-bg-color: #ffffff;
+  --page-theme-color: #015F41;
+  --container-bg-color: #f0f0f0;
+  --container-border-radius: 10px;
+  --container-darker-color: #9c9c9c;
+  --primary-text-color: #333;
+  --primary-text-hover-color: #000000;
+  --nav-bg-color: #f0f0f0;
+  --nav-text-color: #015F41;
+  --nav-text-hover-color: #333;
+  --btn-bg-color: #015F41;
+  --btn-bg-hover-color: #029a69;
+  --btn-text-color: #ffffff;
+}
   
   .custom-navbar {
     background-color: var(--nav-bg-color); 
@@ -26,10 +30,15 @@
     margin-right: 15px;
     font-size: 1.1rem;
     transition: color 0.3s ease;
+    text-align: center;
   }
   
   .custom-nav-links .nav-link:hover {
     color: var(--nav-text-hover-color) !important;
+  }
+
+  .nav-link.active {
+    border-bottom: 2px solid !important;
   }
   
   .custom-dropdown .dropdown-menu {

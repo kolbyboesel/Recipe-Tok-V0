@@ -21,11 +21,25 @@ body {
     sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: var(--btn-bg-color);
+  color: var(--btn-text-color);
+  border: none;
+  border-radius: var(--container-border-radius)!important;
+  cursor: pointer;
+}
+
+.bg-red{ 
+  background-color: #f44336!important;
 }
 
 .loading-spinner {
@@ -54,11 +68,24 @@ code {
   }
 }
 
+.text-center {
+  text-align: center;
+}
+
+.left-align {
+  text-align: left;
+}
+
+.right-align {
+  text-align: right;
+}
+
 .page {
   background-color: var(--page-bg-color, #ffffff); 
-  min-height: 100vh;
+  min-height: calc(100vh - 80px - 108px);
   padding-top: 25px;
   padding-bottom: 25px;
+  overflow: auto;
 }
 
 /* Responsive Design for Tablets */
@@ -222,4 +249,14 @@ code {
 
 .recipe-video a:hover {
   background-color: var(--btn-bg-hover-color);
+}
+
+.add-recipe-btn { 
+  background-color: transparent;
+  color: var(--primary-text-color);
+}
+
+.add-recipe-btn:hover { 
+  background-color: white;
+  color: var(--primary-text-color);
 }
