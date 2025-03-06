@@ -1,6 +1,6 @@
 {
-  "short_name": "RecipesTok",
-  "name": "RecipesTok",
+  "short_name": "RecipeTok",
+  "name": "RecipeTok",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,6 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#ff1717",
+  "theme_color": "#f0f0f0",
   "background_color": "#ffffff"
 }

@@ -9,7 +9,7 @@ const RecipeTokNavbar = () => {
             <Container>
                 <Navbar.Brand as={Link} to="/" className="custom-brand d-flex align-items-center">
                     <img src={`${process.env.PUBLIC_URL}/logo192.png`} alt="RecipeTok Logo" className="navbar-logo me-2" />
-                    RecipesTok
+                    RecipeTok
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
