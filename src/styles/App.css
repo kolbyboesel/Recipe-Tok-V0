@@ -1,0 +1,225 @@
+:root {
+  --page-bg-color: #ffffff;
+  --page-theme-color: #015F41;
+  --container-bg-color: #f0f0f0;
+  --container-border-radius: 10px;
+  --container-darker-color: #9c9c9c;
+  --primary-text-color: #333;
+  --primary-text-hover-color: #000000;
+  --nav-bg-color: #f0f0f0;
+  --nav-text-color: #015F41;
+  --nav-text-hover-color: #333;
+  --btn-bg-color: #015F41;
+  --btn-bg-hover-color: #029a69;
+  --btn-text-color: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--page-theme-color);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.page {
+  background-color: var(--page-bg-color, #ffffff); 
+  min-height: 100vh;
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+
+/* Responsive Design for Tablets */
+@media (min-width: 768px) { 
+  .meal-card {
+    width: 200px !important;
+  }
+}
+
+/* Responsive Design for Computers */
+@media (min-width: 1200px) { 
+  .meal-card {
+    width: 300px !important;
+  }
+}
+
+
+.page-content-container {
+  background-color: var(--container-bg-color);
+  width: 100%;
+  border-radius: var(--container-border-radius);
+  padding: 10px;
+}
+
+/* Footer Styles */
+.footer-container {
+  background-color: var(--container-bg-color);
+  color: var(--nav-text-color);
+  padding: 1rem;
+  text-align: center;
+  gap: 10px;
+  display: inline-grid;
+  width: 100vw;
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.social-links a {
+  color: var(--nav-text-color);
+  transition: transform 0.3s ease;
+}
+
+.social-links a:hover {
+  transform: scale(1.1);
+}
+
+/* Dropdown Styling */
+.category-dropdown {
+  margin: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+}
+
+.dropdown-select {
+  padding: 8px;
+  font-size: 1rem;
+  width: -webkit-fill-available !important;
+  max-width: 75%;
+}
+
+/* Meals List */
+.meals-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.meal-card {
+  background: var(--page-bg-color);
+  padding: 10px;
+  border-radius: var(--container-border-radius);
+  text-align: center;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  width: 75%;
+}
+
+.meal-image {
+  width: 100%;
+  border-radius: var(--container-border-radius);
+}
+
+.meal-name {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Recipe Details */
+.recipe-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.recipe-header-image {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius:  var(--container-border-radius);
+}
+
+.recipe-title {
+  margin-top: 20px;
+  font-size: 2rem;
+  color: var(--primary-text-color);
+}
+
+.recipe-meta {
+  margin-top: 10px;
+  color: #777;
+  font-size: 1rem;
+}
+
+.recipe-meta span {
+  margin-right: 10px;
+  padding: 5px 10px;
+  background-color: #e2e2e2;
+  border-radius: var(--container-border-radius);
+}
+
+/* Recipe Details Section */
+.recipe-details h2 {
+  margin-top: 30px;
+  font-size: 1.5rem;
+  color: var(--primary-text-color);
+}
+
+.ingredients-list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 20px;
+}
+
+.ingredients-list li {
+  padding: 5px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.instructions {
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+/* Recipe Video Link */
+.recipe-video a {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 15px;
+  background-color: var(--btn-bg-color);
+  color: var(--btn-text-color);
+  text-decoration: none;
+  border-radius: var(--container-border-radius);
+  transition: background-color 0.3s ease;
+}
+
+.recipe-video a:hover {
+  background-color: var(--btn-bg-hover-color);
+}

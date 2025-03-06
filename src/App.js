@@ -1,24 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import './styles/App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import React from 'react';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
+import { GlobalProvider } from "./GlobalContext";
+import RecipeTokNavbar from './components/RecipeTokNavbar';
+import Footer from './components/Footer';
+import Home from './pages/Home';
+import Cookbook from './pages/Cookbook';
+import RecipeDetails from "./pages/RecipeDetails";
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <RecipeTokNavbar />
+      <GlobalProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/Cookbook" element={<Cookbook />} />
+          <Route path="/recipe/:id" element={<RecipeDetails />} />
+        </Routes>
+      </GlobalProvider>
+      <Footer />
+    </Router>
   );
 }
 
