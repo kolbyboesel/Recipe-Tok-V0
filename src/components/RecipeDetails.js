@@ -35,7 +35,7 @@ const RecipeDetails = () => {
   if (error) return <div className="error-message">{error}</div>;
   if (!recipe) return <div className="error-message">No recipe found.</div>;
 
-  // ✅ Function to safely parse JSON
+  // Function to safely parse JSON
   const safeParseJSON = (data, fallback) => {
     try {
       return data ? JSON.parse(data.replace(/'/g, '"')) : fallback;
