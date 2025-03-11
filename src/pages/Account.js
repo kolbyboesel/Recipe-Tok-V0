@@ -100,8 +100,7 @@ const Account = () => {
         alert('Profile picture updated successfully!');
         const updatedSettings = {
           ...settings,
-          profilePictureUrl: response.data.profilePictureUrl || settings.profilePictureUrl,
-          profilePictureBase64: base64Image
+          profilePic: base64Image
         };
         setSettings(updatedSettings);
         updateUserSettings(updatedSettings);
