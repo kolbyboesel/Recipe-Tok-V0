@@ -1,9 +1,34 @@
+// UserSettings.js
 import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 export const UserSettingsContext = createContext();
 
 export const UserSettingsProvider = ({ children }) => {
   const [userSettings, setUserSettings] = useState(null);
+  const [userRecipes, setUserRecipes] = useState([]);
+  const [userFavorites, setUserFavorites] = useState([]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (userSettings?.loginID) {
+        try {
+          const recipesRes = await fetch(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/get-custom/${userSettings.loginID}`);
+          const recipesData = await recipesRes.json();
+          setUserRecipes(recipesData);
+
+          const favoritesRes = await fetch(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/favorites-full/${userSettings.loginID}`);
+          const favoritesData = await favoritesRes.json();
+          setUserFavorites(favoritesData);
+
+          console.log('Reloaded user recipes and favorites after refresh');
+        } catch (err) {
+          console.error('Error reloading user data:', err);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [userSettings?.loginID]);
 
   const defaultSettings = useMemo(() => ({
     loginID: 'defaultUser@gmail.com',
@@ -13,15 +38,10 @@ export const UserSettingsProvider = ({ children }) => {
   }), []);
 
   const fetchUserSettings = useCallback(() => {
-    // Try to get the settings from localStorage
     const savedSettings = localStorage.getItem('userSettings');
     if (savedSettings) {
-      // If settings are found, use them
       setUserSettings(JSON.parse(savedSettings));
-      console.log('Using stored user settings.');
     } else {
-      // If no settings are found, set default settings
-      console.log('No saved settings, using default settings.');
       setUserSettings(defaultSettings);
     }
   }, [defaultSettings]);
@@ -30,23 +50,39 @@ export const UserSettingsProvider = ({ children }) => {
     fetchUserSettings();
   }, [fetchUserSettings]);
 
-  const updateUserSettings = (settings) => {
+  const updateUserSettings = async (settings) => {
     try {
-      setUserSettings(settings);
       settings.isLoggedIn = true;
-
+      setUserSettings(settings);
       localStorage.setItem('userSettings', JSON.stringify(settings));
 
-      console.log('User settings updated locally');
+      // Load custom recipes
+      const recipesRes = await fetch(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/get-custom/${settings.loginID}`);
+      const recipesData = await recipesRes.json();
+      setUserRecipes(recipesData);
+
+      // Load favorite recipe IDs
+      const favoritesRes = await fetch(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/favorites-full/${settings.loginID}`);
+      const favoritesData = await favoritesRes.json();
+      setUserFavorites(favoritesData);
+
+      console.log('Loaded user recipes and favorites into context');
     } catch (error) {
-      console.error('Error occurred while updating user settings locally:', error);
+      console.error('Error loading user data:', error);
     }
   };
 
   const settingsToProvide = userSettings || defaultSettings;
 
   return (
-    <UserSettingsContext.Provider value={{ userSettings: settingsToProvide, updateUserSettings }}>
+    <UserSettingsContext.Provider value={{
+      userSettings: settingsToProvide,
+      updateUserSettings,
+      userRecipes,
+      setUserRecipes,
+      userFavorites,
+      setUserFavorites
+    }}>
       {children}
     </UserSettingsContext.Provider>
   );

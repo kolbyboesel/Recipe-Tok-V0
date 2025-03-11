@@ -6,10 +6,8 @@ import { FaPlusCircle } from 'react-icons/fa';
 import MealsList from "../components/RecipeList";
 
 const Account = () => {
-  const { updateUserSettings, userSettings } = useContext(UserSettingsContext);
+  const { updateUserSettings, userSettings, userRecipes, userFavorites } = useContext(UserSettingsContext);
   const navigate = useNavigate();
-  const [favoriteRecipes, setFavoriteRecipes] = useState([]);
-  const [customRecipes, setCustomRecipes] = useState([]);
 
   const [settings, setSettings] = useState({
     loginID: '',
@@ -21,8 +19,6 @@ const Account = () => {
   useEffect(() => {
     if (userSettings) {
       setSettings(userSettings);
-      setFavoriteRecipes(userSettings.favoriteRecipes);
-      setCustomRecipes(userSettings.customRecipes);
     }
   }, [userSettings]);
 
@@ -76,7 +72,7 @@ const Account = () => {
       {/* Favorite Recipes */}
       <div className="page-content-container">
         <h3>Favorite Recipes</h3>
-        <MealsList meals={favoriteRecipes} />
+        <MealsList meals={userFavorites} />
       </div>
       <br></br>
 
@@ -86,7 +82,7 @@ const Account = () => {
           <h3>Custom Recipes</h3>
           <button className="add-recipe-btn" onClick={handleAddRecipe}><FaPlusCircle size={24} /></button>
         </div>
-        <MealsList meals={customRecipes} />
+        <MealsList meals={userRecipes} />
       </div>
     </div>
   );

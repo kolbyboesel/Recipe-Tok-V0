@@ -26,7 +26,7 @@ const ChangePassword = () => {
   };
 
   const handleCancel = () => {
-    navigate('/AddRecipe');
+    navigate('/Account');
   };
   const handleChangeSubmit = async (e) => {
     e.preventDefault();
