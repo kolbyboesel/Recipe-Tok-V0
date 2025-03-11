@@ -7,7 +7,6 @@ import { FaTrash } from 'react-icons/fa';
 const RecipeList = ({ meals, setMeals }) => {
     const navigate = useNavigate();
     const { userSettings, updateUserSettings, userFavorites, setUserFavorites } = useContext(UserSettingsContext);
-
     const [favoriteLoading, setFavoriteLoading] = useState(null);
 
     const handleCardClick = (id) => {
@@ -76,8 +75,7 @@ const RecipeList = ({ meals, setMeals }) => {
                             style={{ cursor: "pointer", position: "relative" }}
                         >
                             {/* Star Favorite */}
-                            {/* Star Favorite (only if user is logged in) */}
-                            {userSettings?.loginID && (
+                            {userSettings.isLoggedIn === true && (
                                 <div
                                     style={{
                                         position: "absolute",
