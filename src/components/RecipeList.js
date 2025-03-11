@@ -76,21 +76,24 @@ const RecipeList = ({ meals, setMeals }) => {
                             style={{ cursor: "pointer", position: "relative" }}
                         >
                             {/* Star Favorite */}
-                            <div
-                                style={{
-                                    position: "absolute",
-                                    top: "10px",
-                                    right: meal.createdBy === userSettings.loginID ? "40px" : "15px",
-                                    fontSize: "24px",
-                                    color: isFavorited(meal.recipeId) ? "gold" : "lightgray",
-                                    cursor: "pointer",
-                                    zIndex: 2,
-                                }}
-                                onClick={(e) => toggleFavorite(e, meal.recipeId)}
-                                title={isFavorited(meal.recipeId) ? "Remove from favorites" : "Add to favorites"}
-                            >
-                                {favoriteLoading === meal.recipeId ? "..." : isFavorited(meal.recipeId) ? "★" : "☆"}
-                            </div>
+                            {/* Star Favorite (only if user is logged in) */}
+                            {userSettings?.loginID && (
+                                <div
+                                    style={{
+                                        position: "absolute",
+                                        top: "10px",
+                                        right: meal.createdBy === userSettings.loginID ? "40px" : "15px",
+                                        fontSize: "24px",
+                                        color: isFavorited(meal.recipeId) ? "gold" : "lightgray",
+                                        cursor: "pointer",
+                                        zIndex: 2,
+                                    }}
+                                    onClick={(e) => toggleFavorite(e, meal.recipeId)}
+                                    title={isFavorited(meal.recipeId) ? "Remove from favorites" : "Add to favorites"}
+                                >
+                                    {favoriteLoading === meal.recipeId ? "..." : isFavorited(meal.recipeId) ? "★" : "☆"}
+                                </div>
+                            )}
 
                             {/* Trash Icon for Custom Recipes */}
                             {meal.createdBy === userSettings.loginID && (
