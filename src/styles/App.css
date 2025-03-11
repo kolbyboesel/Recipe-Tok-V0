@@ -38,8 +38,16 @@ button {
   cursor: pointer;
 }
 
+button:hover {
+  background-color: var(--btn-bg-hover-color);
+}
+
 .bg-red{ 
   background-color: #f44336!important;
+}
+
+.bg-red:hover{ 
+  background-color: #f46b61!important;
 }
 
 .loading-spinner {

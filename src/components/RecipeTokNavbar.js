@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Navbar, Nav, Container } from "react-bootstrap";
+import { Navbar, NavDropdown, Nav, Container } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import "../styles/Navbar.css";
 import { UserSettingsContext } from './UserSettings';
@@ -13,6 +13,8 @@ const RecipeTokNavbar = () => {
         lastName: '',
         isLoggedIn: false,
     });
+
+    const profilePictureBase64 = userSettings?.profilePic || '';
 
     const [expanded, setExpanded] = useState(false);
     const navRef = useRef();
@@ -63,12 +65,38 @@ const RecipeTokNavbar = () => {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto custom-nav-links">
                         <Nav.Link as={NavLink} to="/" className={({ isActive }) => classNames("custom-link", { active: isActive })} onClick={handleNavClick}>Home</Nav.Link>
-                        <Nav.Link as={NavLink} to="/Cookbook" className={({ isActive }) => classNames("custom-link", { active: isActive })} onClick={handleNavClick}>Cookbook</Nav.Link>
-
                         {settings.isLoggedIn ? (
                             <>
-                                <Nav.Link as="button" onClick={() => { handleSignOut(); handleNavClick(); }} className="custom-link nav-link">Signout</Nav.Link>
-                                <Nav.Link as={NavLink} to="/Account" className={({ isActive }) => classNames("custom-link", { active: isActive })} onClick={handleNavClick}>Account</Nav.Link>
+                                <Nav.Link as={NavLink} to="/Cookbook" className={({ isActive }) => classNames("custom-link", { active: isActive })} onClick={handleNavClick}>My Cookbook</Nav.Link>
+                                <NavDropdown
+                                    title={
+                                        <div className="nav-avatar-wrapper" >
+                                            {profilePictureBase64 ? (
+                                                <img src={profilePictureBase64} alt="Profile" className="nav-avatar-img" />
+                                            ) : (
+                                                <div className="nav-avatar-placeholder">
+                                                    {userSettings?.firstName?.charAt(0).toUpperCase() || 'A'}
+                                                </div>
+                                            )}
+                                        </div>
+                                    }
+                                    id="account-dropdown"
+                                    className="custom-dropdown"
+                                >
+
+                                    <NavDropdown.Item as={NavLink} to="/Account" onClick={handleNavClick}>
+                                        Manage Account
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item
+                                        as="button"
+                                        onClick={() => {
+                                            handleSignOut();
+                                            handleNavClick();
+                                        }}
+                                    >
+                                        Logout
+                                    </NavDropdown.Item>
+                                </NavDropdown>
                             </>
                         ) : (
                             <>

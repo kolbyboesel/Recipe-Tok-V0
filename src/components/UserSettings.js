@@ -35,12 +35,23 @@ export const UserSettingsProvider = ({ children }) => {
     firstName: 'John',
     lastName: 'Doe',
     isLoggedIn: false,
+    profilePictureUrl: '',
+    profilePictureBase64: ''
   }), []);
 
   const fetchUserSettings = useCallback(() => {
     const savedSettings = localStorage.getItem('userSettings');
     if (savedSettings) {
-      setUserSettings(JSON.parse(savedSettings));
+      const parsed = JSON.parse(savedSettings);
+
+      // Ensure profile picture fields exist even if missing in old data
+      const settingsWithDefaults = {
+        ...defaultSettings,
+        ...parsed,
+        profilePic: parsed.profilePic || ''
+      };
+
+      setUserSettings(settingsWithDefaults);
     } else {
       setUserSettings(defaultSettings);
     }
@@ -52,17 +63,23 @@ export const UserSettingsProvider = ({ children }) => {
 
   const updateUserSettings = async (settings) => {
     try {
-      settings.isLoggedIn = true;
-      setUserSettings(settings);
-      localStorage.setItem('userSettings', JSON.stringify(settings));
+      const updated = {
+        ...defaultSettings,
+        ...settings,
+        isLoggedIn: true,
+        profilePic: settings.profilePic || ''
+      };
+
+      setUserSettings(updated);
+      localStorage.setItem('userSettings', JSON.stringify(updated));
 
       // Load custom recipes
-      const recipesRes = await fetch(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/get-custom/${settings.loginID}`);
+      const recipesRes = await fetch(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/get-custom/${updated.loginID}`);
       const recipesData = await recipesRes.json();
       setUserRecipes(recipesData);
 
       // Load favorite recipe IDs
-      const favoritesRes = await fetch(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/favorites-full/${settings.loginID}`);
+      const favoritesRes = await fetch(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/favorites-full/${updated.loginID}`);
       const favoritesData = await favoritesRes.json();
       setUserFavorites(favoritesData);
 

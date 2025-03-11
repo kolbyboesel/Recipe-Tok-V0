@@ -17,7 +17,7 @@ const Home = () => {
     });
     const [sortBy, setSortBy] = useState("name");
 
-    // 🔥 Pagination
+    // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const [recipesPerPage, setRecipesPerPage] = useState(12); // adjustable by user
 
