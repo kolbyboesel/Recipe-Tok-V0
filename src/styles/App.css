@@ -407,3 +407,22 @@ button {
   background-color: white;
   color: var(--primary-text-color);
 }
+
+/* Pagination */
+.pagination-controls button {
+  margin: 0 4px;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.pagination-controls button.active-page {
+  font-weight: bold;
+  background-color: #d1e7dd;
+}
+
+.pagination-controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

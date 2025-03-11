@@ -17,12 +17,13 @@ const Home = () => {
     });
     const [sortBy, setSortBy] = useState("name");
 
-    // Fetch recipes
+    // 🔥 Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const [recipesPerPage, setRecipesPerPage] = useState(12); // adjustable by user
+
     const fetchRecipes = async () => {
         try {
-            const response = await axios.get(
-                `https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/get-all`
-            );
+            const response = await axios.get(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/get-all`);
             if (response.status === 200) {
                 setRecipes(response.data);
                 setFilteredRecipes(response.data);
@@ -40,23 +41,19 @@ const Home = () => {
         fetchRecipes();
     }, []);
 
-    // Filtering & Sorting Logic
     useEffect(() => {
         let filtered = recipes.filter(recipe => {
             const nameMatches = recipe.name && recipe.name.toLowerCase().includes(searchTerm.toLowerCase());
             const timeMatches = filters.minutes ? recipe.minutes <= filters.minutes : true;
             const stepsMatch = filters.numberOfSteps ? recipe.numberOfSteps <= filters.numberOfSteps : true;
             const ingredientsMatch = filters.numberOfIngredients ? recipe.numberOfIngredients <= filters.numberOfIngredients : true;
-
             const tagsMatch =
                 filters.tags.length === 0 ||
                 (recipe.tags &&
                     JSON.parse(recipe.tags.replace(/'/g, '"')).some(tag => filters.tags.includes(tag)));
-
             return nameMatches && timeMatches && stepsMatch && ingredientsMatch && tagsMatch;
         });
 
-        // Sorting Logic
         filtered = filtered.sort((a, b) => {
             switch (sortBy) {
                 case "minutes":
@@ -72,7 +69,20 @@ const Home = () => {
         });
 
         setFilteredRecipes(filtered);
+        setCurrentPage(1); // Reset to first page on new filters
     }, [searchTerm, filters, sortBy, recipes]);
+
+    // 🔥 Pagination Logic
+    const indexOfLastRecipe = currentPage * recipesPerPage;
+    const indexOfFirstRecipe = indexOfLastRecipe - recipesPerPage;
+    const currentRecipes = filteredRecipes.slice(indexOfFirstRecipe, indexOfLastRecipe);
+    const totalPages = Math.ceil(filteredRecipes.length / recipesPerPage);
+
+    const handlePageChange = (pageNum) => setCurrentPage(pageNum);
+    const handleRecipesPerPageChange = (e) => {
+        setRecipesPerPage(Number(e.target.value));
+        setCurrentPage(1); // reset to first page when changing page size
+    };
 
     if (isLoading) return <Spinner />;
 
@@ -86,12 +96,50 @@ const Home = () => {
                     setFilters={setFilters}
                     sortBy={sortBy}
                     setSortBy={setSortBy}
-                    recipes={recipes}  // Passes full dataset to extract unique tags
+                    recipes={recipes}
                 />
             </div>
-            <br />
+            <br></br>
             <div className='page-content-container'>
-                <MealsList meals={filteredRecipes} />
+                <MealsList meals={currentRecipes} />
+            </div>
+
+            <div className="page-content-container d-flex justify-content-between align-items-center mt-3 mb-2" style={{ overflowX: 'auto' }}>
+                <label>
+                    Recipes per page:{" "}
+                    <select value={recipesPerPage} onChange={handleRecipesPerPageChange}>
+                        <option value={6}>6</option>
+                        <option value={12}>12</option>
+                        <option value={24}>24</option>
+                        <option value={48}>48</option>
+                    </select>
+                </label>
+
+                <div className="pagination-controls d-flex">
+                    <button
+                        disabled={currentPage === 1}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                    >
+                        Previous
+                    </button>
+
+                    {Array.from({ length: totalPages }, (_, i) => (
+                        <button
+                            key={i + 1}
+                            onClick={() => handlePageChange(i + 1)}
+                            className={currentPage === i + 1 ? "active-page" : ""}
+                        >
+                            {i + 1}
+                        </button>
+                    ))}
+
+                    <button
+                        disabled={currentPage === totalPages}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
         </div>
     );
