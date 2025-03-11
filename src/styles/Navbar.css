@@ -14,6 +14,8 @@
   --btn-text-color: #ffffff;
 }
   
+
+
   .custom-navbar {
     background-color: var(--nav-bg-color); 
     padding: 10px 20px;
@@ -79,7 +81,6 @@
     width: auto;
   }
 
-  /* Avatar container inside navbar dropdown toggle */
 .nav-avatar-wrapper {
   display: flex;
   align-items: center;
@@ -93,7 +94,6 @@
   margin-right: 8px;
 }
 
-/* Avatar image */
 .nav-avatar-img {
   width: 100%;
   height: 100%;
@@ -101,7 +101,6 @@
   border-radius: 50%;
 }
 
-/* Placeholder avatar with initial */
 .nav-avatar-placeholder {
   width: 100%;
   height: 100%;
@@ -113,4 +112,11 @@
   font-weight: bold;
   font-size: 0.9rem;
   border-radius: 50%;
+}
+
+.borderless-toggle {
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  background: transparent !important;
 }
