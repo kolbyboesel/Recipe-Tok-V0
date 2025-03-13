@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaFilter, FaTimes } from "react-icons/fa";
+import { FaFilter, FaTimes, FaSearch, FaSortAmountDown } from "react-icons/fa";
 
 const RecipeFiltering = ({ searchTerm, setSearchTerm, filters, setFilters, sortBy, setSortBy, recipes }) => {
   const [showFilters, setShowFilters] = useState(false);
@@ -15,7 +15,7 @@ const RecipeFiltering = ({ searchTerm, setSearchTerm, filters, setFilters, sortB
       }
     });
 
-    setAllTags(Array.from(tagSet));
+    setAllTags(Array.from(tagSet).sort());
   }, [recipes]);
 
   // Handle numeric filters
@@ -52,109 +52,192 @@ const RecipeFiltering = ({ searchTerm, setSearchTerm, filters, setFilters, sortB
     setSearchTerm("");
   };
 
+  // Function to check if any filters are active
+  const hasActiveFilters = () => {
+    return filters.minutes !== "" ||
+      filters.numberOfSteps !== "" ||
+      filters.numberOfIngredients !== "" ||
+      filters.tags.length > 0 ||
+      searchTerm !== "";
+  };
+
   return (
-    <>
-      {/* Search Bar & Filter Icon */}
+    <div>
       <div className="filter-container-row">
-        <input
-          type="text"
-          placeholder="Search by name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
-        />
-        <FaFilter className="filter-icon" onClick={() => setShowFilters(!showFilters)} />
+        <div style={{ position: 'relative', flex: 1 }}>
+          <FaSearch className="search-icon" />
+          <input
+            type="text"
+            placeholder="Search recipes by name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+            style={{ paddingLeft: '40px' }}
+          />
+          {searchTerm && (
+            <FaTimes
+              style={{
+                position: 'absolute',
+                right: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer'
+              }}
+              onClick={() => setSearchTerm("")}
+            />
+          )}
+        </div>
+
+        <button
+          className="filter-icon"
+          style={{
+            backgroundColor: showFilters
+              ? 'var(--primary-light)'
+              : hasActiveFilters()
+                ? 'var(--accent-color)'
+                : 'var(--primary-color)'
+          }}
+          onClick={() => setShowFilters(!showFilters)}
+        >
+          <FaFilter />
+          {hasActiveFilters() && (
+            <div className="badge">
+              {(filters.minutes !== "" ? 1 : 0) +
+                (filters.numberOfSteps !== "" ? 1 : 0) +
+                (filters.numberOfIngredients !== "" ? 1 : 0) +
+                filters.tags.length}
+            </div>
+          )}
+          <span>{showFilters ? "Hide Filters" : "Filters"}</span>
+        </button>
       </div>
 
-      {/* Filters Section (Hidden by Default, Toggled by Click) */}
       {showFilters && (
         <div className="filter-container-column">
           <div className="filters-section">
             <div className="filter-group">
-              <label>Max Time (min):</label>
-              <input
-                type="number"
-                name="minutes"
-                value={filters.minutes || ""}
-                onChange={handleFilterChange}
-                className="filter-input"
-              />
+              <label>Max Cooking Time</label>
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="number"
+                  name="minutes"
+                  value={filters.minutes || ""}
+                  onChange={handleFilterChange}
+                  className="filter-input"
+                  placeholder="Any time"
+                />
+                <span style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'var(--text-secondary)',
+                  fontSize: '0.8rem'
+                }}>min</span>
+              </div>
             </div>
 
             <div className="filter-group">
-              <label>Max Steps:</label>
+              <label>Max Number of Steps</label>
               <input
                 type="number"
                 name="numberOfSteps"
                 value={filters.numberOfSteps || ""}
                 onChange={handleFilterChange}
                 className="filter-input"
+                placeholder="Any steps"
               />
             </div>
 
             <div className="filter-group">
-              <label>Max Ingredients:</label>
+              <label>Max Ingredients</label>
               <input
                 type="number"
                 name="numberOfIngredients"
                 value={filters.numberOfIngredients || ""}
                 onChange={handleFilterChange}
                 className="filter-input"
+                placeholder="Any ingredients"
               />
             </div>
 
-            {/* Sorting Options */}
             <div className="filter-group">
-              <label>Sort By:</label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="filter-input"
-              >
-                <option value="name">Name (A-Z)</option>
-                <option value="minutes">Time (Ascending)</option>
-                <option value="numberOfSteps">Steps (Ascending)</option>
-                <option value="numberOfIngredients">Ingredients (Ascending)</option>
-              </select>
+              <label>Sort Recipes By</label>
+              <div style={{ position: 'relative' }}>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="filter-input"
+                  style={{
+                    paddingRight: '30px',
+                    appearance: 'none'
+                  }}
+                >
+                  <option value="name">Name (A-Z)</option>
+                  <option value="minutes">Cooking Time (Fastest first)</option>
+                  <option value="numberOfSteps">Number of Steps (Fewest first)</option>
+                  <option value="numberOfIngredients">Number of Ingredients (Fewest first)</option>
+                </select>
+                <FaSortAmountDown style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: 'var(--text-secondary)',
+                  pointerEvents: 'none'
+                }} />
+              </div>
             </div>
           </div>
 
-          {/* Dynamic Multi-Select Tag Filter */}
           <div className="tag-filter">
-            <p className="filter-title">Filter by Tags:</p>
+            <p className="filter-title">Recipe Tags</p>
             <div className="tag-list">
-              {allTags.map((tag) => (
-                <label key={tag} className="tag-checkbox">
-                  <input
-                    type="checkbox"
-                    checked={filters.tags.includes(tag)}
-                    onChange={() => handleTagToggle(tag)}
-                  />
-                  {tag}
-                </label>
-              ))}
+              {allTags.length > 0 ? (
+                allTags.map((tag) => (
+                  <label
+                    key={tag}
+                    className="tag-checkbox"
+                    style={{
+                      backgroundColor: filters.tags.includes(tag) ? 'var(--primary-color)' : 'var(--background-light)',
+                      color: filters.tags.includes(tag) ? 'white' : 'var(--text-primary)',
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={filters.tags.includes(tag)}
+                      onChange={() => handleTagToggle(tag)}
+                      style={{ display: 'none' }}
+                    />
+                    {tag}
+                  </label>
+                ))
+              ) : (
+                <p style={{ padding: '0.5rem', color: 'var(--text-secondary)' }}>No tags available</p>
+              )}
             </div>
           </div>
 
-          {/* Selected Tags Display */}
           {filters.tags.length > 0 && (
             <div className="selected-tags">
               <p className="filter-title">Selected Tags:</p>
               {filters.tags.map((tag) => (
                 <span key={tag} className="selected-tag" onClick={() => handleTagToggle(tag)}>
-                  {tag} ✖
+                  {tag} <FaTimes style={{ marginLeft: '5px', fontSize: '0.7rem' }} />
                 </span>
               ))}
             </div>
           )}
 
-          {/* Reset All Button */}
-          <button className="reset-button" onClick={resetFilters}>
-            Reset All <FaTimes />
-          </button>
+          {hasActiveFilters() && (
+            <button className="reset-button" onClick={resetFilters}>
+              Reset All Filters <FaTimes />
+            </button>
+          )}
         </div>
       )}
-    </>
+    </div>
   );
 };
 

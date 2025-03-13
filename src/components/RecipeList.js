@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserSettingsContext } from "./UserSettings";
 import axios from "axios";
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaStar, FaRegStar, FaClock, FaListUl, FaCarrot } from 'react-icons/fa';
 
 const RecipeList = ({ meals, setMeals }) => {
     const navigate = useNavigate();
@@ -61,81 +61,96 @@ const RecipeList = ({ meals, setMeals }) => {
         }
     };
 
+    if (!meals || meals.length === 0) {
+        return (
+            <div className="text-center" style={{ padding: "3rem 1rem" }}>
+                <p>No recipes found.</p>
+            </div>
+        );
+    }
+
     return (
         <div className="meals-container">
-            {meals && meals.length > 0 ? (
-                meals.map((meal) => {
-                    const tags = meal.tags ? JSON.parse(meal.tags.replace(/'/g, '"')) : [];
+            {meals.map((meal) => {
+                const tags = meal.tags ? JSON.parse(meal.tags.replace(/'/g, '"')) : [];
+                const isFavorite = isFavorited(meal.recipeId);
 
-                    return (
-                        <div
-                            key={meal.recipeId}
-                            className="meal-card"
-                            onClick={() => handleCardClick(meal.id)}
-                            style={{ cursor: "pointer", position: "relative" }}
-                        >
-                            {/* Star Favorite */}
-                            {userSettings.isLoggedIn === true && (
-                                <div
-                                    style={{
-                                        position: "absolute",
-                                        top: "10px",
-                                        right: meal.createdBy === userSettings.loginID ? "40px" : "15px",
-                                        fontSize: "24px",
-                                        color: isFavorited(meal.recipeId) ? "gold" : "lightgray",
-                                        cursor: "pointer",
-                                        zIndex: 2,
-                                    }}
-                                    onClick={(e) => toggleFavorite(e, meal.recipeId)}
-                                    title={isFavorited(meal.recipeId) ? "Remove from favorites" : "Add to favorites"}
-                                >
-                                    {favoriteLoading === meal.recipeId ? "..." : isFavorited(meal.recipeId) ? "★" : "☆"}
-                                </div>
-                            )}
+                return (
+                    <div
+                        key={meal.recipeId || meal.id}
+                        className="meal-card"
+                        onClick={() => handleCardClick(meal.id)}
+                    >
+                        {/* Favorite Button */}
+                        {userSettings.isLoggedIn && (
+                            <button
+                                className="favorite-btn"
+                                onClick={(e) => toggleFavorite(e, meal.recipeId)}
+                                title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                            >
+                                {favoriteLoading === meal.recipeId ?
+                                    "..." :
+                                    (isFavorite ? <FaStar /> : <FaRegStar />)
+                                }
+                            </button>
+                        )}
 
-                            {/* Trash Icon for Custom Recipes */}
-                            {meal.createdBy === userSettings.loginID && (
-                                <div
-                                    style={{
-                                        position: "absolute",
-                                        top: "10px",
-                                        right: "10px",
-                                        fontSize: "20px",
-                                        color: "crimson",
-                                        cursor: "pointer",
-                                        zIndex: 3,
-                                    }}
-                                    title="Delete custom recipe"
-                                    onClick={(e) => handleDeleteClick(e, meal.id)}
-                                >
-                                    <FaTrash size={24} />
-                                </div>
-                            )}
+                        {/* Delete Button for Custom Recipes */}
+                        {meal.createdBy === userSettings.loginID && (
+                            <button
+                                className="delete-btn"
+                                onClick={(e) => handleDeleteClick(e, meal.id)}
+                                title="Delete custom recipe"
+                            >
+                                <FaTrash />
+                            </button>
+                        )}
 
-                            {/* Recipe Name */}
+                        <div className="meal-card-content">
                             <h3 className="meal-name">{meal.name || "Unnamed Recipe"}</h3>
 
-                            <div className="filter-container justify-center">
-                                <p className="meal-info"><strong>Cook Time:</strong> {meal.minutes || "N/A"} min</p>
-                                <p className="meal-info"><strong>Ingredients:</strong> {meal.numberOfIngredients || "N/A"}</p>
-                                <p className="meal-info"><strong>Steps:</strong> {meal.numberOfSteps || "N/A"}</p>
+                            <div className="meal-info-grid">
+                                <div className="meal-info">
+                                    <span className="meal-info-label">Time</span>
+                                    <span className="meal-info-value">
+                                        <FaClock style={{ marginRight: '4px' }} />
+                                        {meal.minutes || "N/A"}
+                                    </span>
+                                </div>
+
+                                <div className="meal-info">
+                                    <span className="meal-info-label">Ingredients</span>
+                                    <span className="meal-info-value">
+                                        <FaCarrot style={{ marginRight: '4px' }} />
+                                        {meal.numberOfIngredients || "N/A"}
+                                    </span>
+                                </div>
+
+                                <div className="meal-info">
+                                    <span className="meal-info-label">Steps</span>
+                                    <span className="meal-info-value">
+                                        <FaListUl style={{ marginRight: '4px' }} />
+                                        {meal.numberOfSteps || "N/A"}
+                                    </span>
+                                </div>
                             </div>
 
                             <div className="meal-tags">
                                 {tags.length > 0 ? (
-                                    tags.map((tag, index) => (
+                                    tags.slice(0, 3).map((tag, index) => (
                                         <span key={index} className="recipe-tag">{tag}</span>
                                     ))
                                 ) : (
                                     <span className="recipe-tag no-tags">No Tags</span>
                                 )}
+                                {tags.length > 3 && (
+                                    <span className="recipe-tag" style={{ backgroundColor: 'var(--background-medium)', color: 'var(--text-secondary)' }}>+{tags.length - 3} more</span>
+                                )}
                             </div>
                         </div>
-                    );
-                })
-            ) : (
-                <p className="no-recipes">No meals found.</p>
-            )}
+                    </div>
+                );
+            })}
         </div>
     );
 };

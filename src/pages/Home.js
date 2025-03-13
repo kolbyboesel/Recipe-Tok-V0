@@ -72,7 +72,7 @@ const Home = () => {
         setCurrentPage(1); // Reset to first page on new filters
     }, [searchTerm, filters, sortBy, recipes]);
 
-    // 🔥 Pagination Logic
+    // Pagination Logic
     const indexOfLastRecipe = currentPage * recipesPerPage;
     const indexOfFirstRecipe = indexOfLastRecipe - recipesPerPage;
     const currentRecipes = filteredRecipes.slice(indexOfFirstRecipe, indexOfLastRecipe);
@@ -99,48 +99,78 @@ const Home = () => {
                     recipes={recipes}
                 />
             </div>
-            <br></br>
+
             <div className='page-content-container'>
                 <MealsList meals={currentRecipes} />
+
+                {filteredRecipes.length > 0 && currentRecipes.length === 0 && (
+                    <div className="text-center" style={{ padding: '2rem' }}>
+                        <p>No recipes match your current filters.</p>
+                    </div>
+                )}
+
+                {filteredRecipes.length === 0 && (
+                    <div className="text-center" style={{ padding: '2rem' }}>
+                        <p>No recipes found. Try adding some recipes or adjusting your filters.</p>
+                    </div>
+                )}
             </div>
 
-            <div className="page-content-container d-flex justify-content-between align-items-center mt-3 mb-2" style={{ overflowX: 'auto' }}>
-                <label>
-                    Recipes per page:{" "}
-                    <select value={recipesPerPage} onChange={handleRecipesPerPageChange}>
-                        <option value={6}>6</option>
-                        <option value={12}>12</option>
-                        <option value={24}>24</option>
-                        <option value={48}>48</option>
-                    </select>
-                </label>
+            {filteredRecipes.length > 0 && (
+                <div className="page-settings">
+                    <div className="recipes-per-page">
+                        <label>
+                            Recipes per page:{" "}
+                            <select value={recipesPerPage} onChange={handleRecipesPerPageChange}>
+                                <option value={6}>6</option>
+                                <option value={12}>12</option>
+                                <option value={24}>24</option>
+                                <option value={48}>48</option>
+                            </select>
+                        </label>
+                    </div>
 
-                <div className="pagination-controls d-flex">
-                    <button
-                        disabled={currentPage === 1}
-                        onClick={() => handlePageChange(currentPage - 1)}
-                    >
-                        Previous
-                    </button>
-
-                    {Array.from({ length: totalPages }, (_, i) => (
+                    <div className="pagination-controls">
                         <button
-                            key={i + 1}
-                            onClick={() => handlePageChange(i + 1)}
-                            className={currentPage === i + 1 ? "active-page" : ""}
+                            disabled={currentPage === 1}
+                            onClick={() => handlePageChange(currentPage - 1)}
                         >
-                            {i + 1}
+                            Previous
                         </button>
-                    ))}
 
-                    <button
-                        disabled={currentPage === totalPages}
-                        onClick={() => handlePageChange(currentPage + 1)}
-                    >
-                        Next
-                    </button>
+                        {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                            // Show 5 pages max with current page in middle if possible
+                            let pageNum;
+                            if (totalPages <= 5) {
+                                pageNum = i + 1;
+                            } else if (currentPage <= 3) {
+                                pageNum = i + 1;
+                            } else if (currentPage >= totalPages - 2) {
+                                pageNum = totalPages - 4 + i;
+                            } else {
+                                pageNum = currentPage - 2 + i;
+                            }
+
+                            return (
+                                <button
+                                    key={pageNum}
+                                    onClick={() => handlePageChange(pageNum)}
+                                    className={currentPage === pageNum ? "active-page" : ""}
+                                >
+                                    {pageNum}
+                                </button>
+                            );
+                        })}
+
+                        <button
+                            disabled={currentPage === totalPages}
+                            onClick={() => handlePageChange(currentPage + 1)}
+                        >
+                            Next
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

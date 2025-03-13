@@ -2,9 +2,10 @@ import React, { useState, useContext } from 'react';
 import { UserSettingsContext } from '../../components/UserSettings';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { FaLock, FaKey, FaTimes } from 'react-icons/fa';
+import "../../styles/Modals.css";
 
 const ChangePassword = () => {
-
   const { userSettings } = useContext(UserSettingsContext);
   const navigate = useNavigate();
   const [changeData, setChangeData] = useState({
@@ -16,6 +17,7 @@ const ChangePassword = () => {
 
   const [confirmPressed, setConfirmPressed] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,6 +30,7 @@ const ChangePassword = () => {
   const handleCancel = () => {
     navigate('/Account');
   };
+
   const handleChangeSubmit = async (e) => {
     e.preventDefault();
     setConfirmPressed(true);
@@ -65,58 +68,84 @@ const ChangePassword = () => {
     <div className="container page">
       <form className="modal-content animate mobileScreen" onSubmit={handleChangeSubmit}>
         <div className="modal-content-container container pt-5 h-auto">
-          <label className="left-align" htmlFor="oldpsw">
-            <b>Current Password</b>
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            placeholder="Old Password"
-            id="oldpsw"
-            name="OldPassword"
-            value={changeData.OldPassword}
-            onChange={handleChange}
-            required
-          />
+          <h2 className="text-center">Change Password</h2>
 
-          <label className="left-align" htmlFor="newpsw">
-            <b>New Password</b>
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            placeholder="New Password"
-            id="newpsw"
-            name="NewPassword"
-            value={changeData.NewPassword}
-            onChange={handleChange}
-            required
-          />
+          {error && <div className="alert-error">{error}</div>}
 
-          <label className="left-align" htmlFor="newpswrepeat">
-            <b>New Password Repeat</b>
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            placeholder="New Password Repeat"
-            id="newpswrepeat"
-            name="NewPasswordRepeat"
-            value={changeData.NewPasswordRepeat}
-            onChange={handleChange}
-            required
-          />
+          <div className="form-group">
+            <div className="password-label-wrapper">
+              <label className="left-align" htmlFor="oldpsw">
+                <b>Current Password</b>
+              </label>
+              <button
+                type="button"
+                className="show-password-btn"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+            <div className="input-icon-wrapper">
+              <FaLock className="input-icon" />
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-control"
+                placeholder="Current Password"
+                id="oldpsw"
+                name="OldPassword"
+                value={changeData.OldPassword}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
 
-          <button className="confirm-btn" type="submit" style={{ borderRadius: '5px' }} disabled={confirmPressed}>
-            {confirmPressed ? 'Updating...' : 'Confirm'}
+          <div className="form-group">
+            <label className="left-align" htmlFor="newpsw">
+              <b>New Password</b>
+            </label>
+            <div className="input-icon-wrapper">
+              <FaKey className="input-icon" />
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-control"
+                placeholder="New Password"
+                id="newpsw"
+                name="NewPassword"
+                value={changeData.NewPassword}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="left-align" htmlFor="newpswrepeat">
+              <b>Confirm New Password</b>
+            </label>
+            <div className="input-icon-wrapper">
+              <FaKey className="input-icon" />
+              <input
+                type={showPassword ? "text" : "password"}
+                className="form-control"
+                placeholder="Confirm New Password"
+                id="newpswrepeat"
+                name="NewPasswordRepeat"
+                value={changeData.NewPasswordRepeat}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          <button className="confirm-btn" type="submit" disabled={confirmPressed}>
+            {confirmPressed ? 'Updating...' : 'Update Password'}
           </button>
-
-          {error && <div style={{ color: 'red' }}>{error}</div>}
         </div>
 
         <div className="container pb-5 pt-3 login-cancel">
-          <button onClick={handleCancel} className="bg-red" style={{ borderRadius: '5px' }}>
-            Cancel
+          <button onClick={handleCancel} className="cancelbtn">
+            <FaTimes /> Cancel
           </button>
         </div>
       </form>

@@ -44,7 +44,7 @@ const Footer = () => {
                     <FaTwitter size={24} />
                 </a>
             </div>
-            <p>Site Last Updated: 3/11/2025</p>
+            <p>Site Last Updated: 3/13/2025</p>
         </footer>
     );
 };

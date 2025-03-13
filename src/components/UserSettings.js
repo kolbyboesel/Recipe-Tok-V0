@@ -1,5 +1,5 @@
 // UserSettings.js
-import React, { createContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 
 export const UserSettingsContext = createContext();
 
@@ -7,28 +7,6 @@ export const UserSettingsProvider = ({ children }) => {
   const [userSettings, setUserSettings] = useState(null);
   const [userRecipes, setUserRecipes] = useState([]);
   const [userFavorites, setUserFavorites] = useState([]);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (userSettings?.loginID) {
-        try {
-          const recipesRes = await fetch(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/get-custom/${userSettings.loginID}`);
-          const recipesData = await recipesRes.json();
-          setUserRecipes(recipesData);
-
-          const favoritesRes = await fetch(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/favorites-full/${userSettings.loginID}`);
-          const favoritesData = await favoritesRes.json();
-          setUserFavorites(favoritesData);
-
-          console.log('Reloaded user recipes and favorites after refresh');
-        } catch (err) {
-          console.error('Error reloading user data:', err);
-        }
-      }
-    };
-
-    fetchUserData();
-  }, [userSettings?.loginID]);
 
   const defaultSettings = useMemo(() => ({
     loginID: 'defaultUser@gmail.com',
@@ -39,32 +17,9 @@ export const UserSettingsProvider = ({ children }) => {
     profilePictureBase64: ''
   }), []);
 
-  const fetchUserSettings = useCallback(() => {
-    const savedSettings = localStorage.getItem('userSettings');
-    if (savedSettings) {
-      const parsed = JSON.parse(savedSettings);
-
-      // Ensure profile picture fields exist even if missing in old data
-      const settingsWithDefaults = {
-        ...defaultSettings,
-        ...parsed,
-        profilePic: parsed.profilePic || ''
-      };
-
-      setUserSettings(settingsWithDefaults);
-    } else {
-      setUserSettings(defaultSettings);
-    }
-  }, [defaultSettings]);
-
-  useEffect(() => {
-    fetchUserSettings();
-  }, [fetchUserSettings]);
-
   const updateUserSettings = async (settings) => {
     try {
       const updated = {
-        ...defaultSettings,
         ...settings,
         isLoggedIn: true,
         profilePic: settings.profilePic || ''
@@ -88,6 +43,34 @@ export const UserSettingsProvider = ({ children }) => {
       console.error('Error loading user data:', error);
     }
   };
+
+  useEffect(() => {
+    const fetchSettings = () => {
+      const savedSettings = localStorage.getItem('userSettings');
+      if (savedSettings) {
+        try {
+          const parsed = JSON.parse(savedSettings);
+
+          // Ensure isLoggedIn is explicitly set
+          const settingsWithDefaults = {
+            ...defaultSettings, // Start with defaults
+            ...parsed, // Override with saved values
+            isLoggedIn: Boolean(parsed.isLoggedIn) // Ensure boolean type
+          };
+
+          setUserSettings(settingsWithDefaults);
+          console.log('User settings loaded from localStorage', settingsWithDefaults);
+        } catch (error) {
+          console.error('Error parsing user settings from localStorage', error);
+          setUserSettings(defaultSettings);
+        }
+      } else {
+        setUserSettings(defaultSettings);
+      }
+    };
+
+    fetchSettings();
+  }, [defaultSettings]);
 
   const settingsToProvide = userSettings || defaultSettings;
 

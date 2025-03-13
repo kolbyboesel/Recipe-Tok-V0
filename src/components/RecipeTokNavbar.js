@@ -3,6 +3,7 @@ import { Navbar, NavDropdown, Nav, Container } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import "../styles/Navbar.css";
 import { UserSettingsContext } from './UserSettings';
+import { FaCog, FaSignOutAlt, FaBook } from 'react-icons/fa';
 
 const RecipeTokNavbar = () => {
     const { userSettings, updateUserSettings } = useContext(UserSettingsContext);
@@ -79,7 +80,7 @@ const RecipeTokNavbar = () => {
                                 <>
                                     <Nav.Link as={NavLink} to="/" className="custom-link" onClick={handleNavClick}>Home</Nav.Link>
                                     <Nav.Link as={NavLink} to="/Cookbook" className="custom-link" onClick={handleNavClick}>My Cookbook</Nav.Link>
-                                    <Nav.Link as={NavLink} to="/Account" className="custom-link" onClick={handleNavClick}>Manage Account</Nav.Link>
+                                    <Nav.Link as={NavLink} to="/Account" className="custom-link" onClick={handleNavClick}>Account Settings</Nav.Link>
                                     <Nav.Link as="button" className="custom-link" onClick={() => { handleSignOut(); handleNavClick(); }}>Logout</Nav.Link>
                                 </>
                             ) : (
@@ -95,14 +96,50 @@ const RecipeTokNavbar = () => {
                                 // Large screen & logged in
                                 <>
                                     <Nav.Link as={NavLink} to="/" className="custom-link" onClick={handleNavClick}>Home</Nav.Link>
-                                    <Nav.Link as={NavLink} to="/Cookbook" className="custom-link" onClick={handleNavClick}>My Cookbook</Nav.Link>
                                     <NavDropdown
-                                        title={<AvatarComponent />}
+                                        title={
+                                            <div className="account-dropdown-toggle">
+                                                <AvatarComponent />
+                                                <span className="user-name-display">
+                                                    {userSettings?.firstName || 'Account'}
+                                                </span>
+                                            </div>
+                                        }
                                         id="account-dropdown"
                                         className="custom-dropdown"
                                     >
-                                        <NavDropdown.Item as={NavLink} to="/Account" onClick={handleNavClick}>Manage Account</NavDropdown.Item>
-                                        <NavDropdown.Item as="button" onClick={() => { handleSignOut(); handleNavClick(); }}>Logout</NavDropdown.Item>
+                                        <div className="dropdown-header">
+                                            <div className="dropdown-user-info">
+                                                <div className="dropdown-avatar">
+                                                    {profilePictureBase64 ? (
+                                                        <img src={profilePictureBase64} alt="Profile" />
+                                                    ) : (
+                                                        <div className="dropdown-avatar-placeholder">
+                                                            {userSettings?.firstName?.charAt(0).toUpperCase() || 'A'}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="dropdown-user-details">
+                                                    <div className="dropdown-user-name">
+                                                        {userSettings?.firstName} {userSettings?.lastName}
+                                                    </div>
+                                                    <div className="dropdown-user-email">
+                                                        {userSettings?.loginID}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="dropdown-divider"></div>
+                                        <NavDropdown.Item as={NavLink} to="/Cookbook" onClick={handleNavClick} className="dropdown-menu-item">
+                                            <FaBook className="dropdown-icon" /> My Cookbook
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Item as={NavLink} to="/Account" onClick={handleNavClick} className="dropdown-menu-item">
+                                            <FaCog className="dropdown-icon" /> Account Settings
+                                        </NavDropdown.Item>
+                                        <div className="dropdown-divider"></div>
+                                        <NavDropdown.Item as="button" onClick={() => { handleSignOut(); handleNavClick(); }} className="dropdown-menu-item logout-item">
+                                            <FaSignOutAlt className="dropdown-icon" /> Logout
+                                        </NavDropdown.Item>
                                     </NavDropdown>
                                 </>
                             ) : (

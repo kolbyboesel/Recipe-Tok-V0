@@ -2,7 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { UserSettingsContext } from '../../src/components/UserSettings';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Spinner from '../components/LoadingSpinner'; // Assuming you have a Spinner component
+import Spinner from '../components/LoadingSpinner';
+import { FaUser, FaEnvelope, FaEdit, FaKey, FaTrash, FaSave, FaTimes, FaCamera } from 'react-icons/fa';
 
 const Account = () => {
   const { updateUserSettings, userSettings } = useContext(UserSettingsContext);
@@ -21,6 +22,7 @@ const Account = () => {
   const [base64Image, setBase64Image] = useState('');
   const [editingImage, setEditingImage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState({ type: '', message: '' });
 
   useEffect(() => {
     if (userSettings) {
@@ -38,22 +40,25 @@ const Account = () => {
           `https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/RecipeTokUserSettings/delete/${settings.loginID}`
         );
         if (response.status === 200) {
-          alert('Your account has been successfully deleted.');
-          updateUserSettings({
-            loginID: 'defaultUser',
-            firstName: 'John',
-            lastName: 'Doe',
-            isLoggedIn: false
-          });
-          localStorage.removeItem('userSettings');
-          navigate('/');
-          window.location.reload();
+          setStatusMessage({ type: 'success', message: 'Your account has been successfully deleted.' });
+
+          setTimeout(() => {
+            updateUserSettings({
+              loginID: 'defaultUser',
+              firstName: 'John',
+              lastName: 'Doe',
+              isLoggedIn: false
+            });
+            localStorage.removeItem('userSettings');
+            navigate('/');
+            window.location.reload();
+          }, 2000);
         } else {
-          alert('Error deleting account: ' + response.data);
+          setStatusMessage({ type: 'error', message: 'Error deleting account: ' + response.data });
         }
       } catch (error) {
         console.error('Error deleting account:', error);
-        alert('An error occurred. Please try again later.');
+        setStatusMessage({ type: 'error', message: 'An error occurred. Please try again later.' });
       } finally {
         setIsLoading(false);
       }
@@ -64,11 +69,22 @@ const Account = () => {
     navigate('/ChangePassword');
   };
 
+  const handleNavigateToCookbook = () => {
+    navigate('/Cookbook');
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setStatusMessage({ type: 'error', message: 'Image size exceeds 5MB limit. Please choose a smaller image.' });
+        return;
+      }
+
       setSelectedImage(file);
       setEditingImage(true);
+      setStatusMessage({ type: '', message: '' });
 
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -79,7 +95,10 @@ const Account = () => {
   };
 
   const handleUploadImage = async () => {
-    if (!selectedImage) return alert('Please select an image first.');
+    if (!selectedImage) {
+      setStatusMessage({ type: 'error', message: 'Please select an image first.' });
+      return;
+    }
 
     const formData = new FormData();
     formData.append('profilePicture', selectedImage);
@@ -97,7 +116,7 @@ const Account = () => {
       );
 
       if (response.status === 200) {
-        alert('Profile picture updated successfully!');
+        setStatusMessage({ type: 'success', message: 'Profile picture updated successfully!' });
         const updatedSettings = {
           ...settings,
           profilePic: base64Image
@@ -107,102 +126,133 @@ const Account = () => {
         localStorage.setItem('userSettings', JSON.stringify(updatedSettings));
         setEditingImage(false);
       } else {
-        alert('Failed to upload image.');
+        setStatusMessage({ type: 'error', message: 'Failed to upload image.' });
       }
     } catch (error) {
       console.error('Upload failed:', error);
-      alert('An error occurred while uploading the profile picture.');
+      setStatusMessage({ type: 'error', message: 'An error occurred while uploading the profile picture.' });
     } finally {
       setIsLoading(false);
     }
   };
 
-  // 🌀 Loading Spinner While Operation is Running
+  const cancelImageEdit = () => {
+    setBase64Image(settings.profilePic || '');
+    setEditingImage(false);
+    setSelectedImage(null);
+    setStatusMessage({ type: '', message: '' });
+  };
+
+  // Get first letter of first name and last name for avatar placeholder
+  const getInitials = () => {
+    const firstInitial = settings.firstName ? settings.firstName.charAt(0).toUpperCase() : '';
+    const lastInitial = settings.lastName ? settings.lastName.charAt(0).toUpperCase() : '';
+    return firstInitial + lastInitial;
+  };
+
   if (isLoading) return <Spinner />;
 
   return (
-    <div className="container page" style={{ maxWidth: '700px', margin: '0 auto', padding: '2rem' }}>
-      <div className="page-content-container" style={{ background: '#fff', padding: '2rem', borderRadius: '12px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
-        <h2 className="text-center mb-4">Welcome, {settings.firstName || 'N/A'}!</h2>
+    <div className="container page">
+      <div className="page-content-container">
+        {statusMessage.message && (
+          <div className={`status-message ${statusMessage.type === 'success' ? 'alert-success' : 'alert-error'} fade-in`}>
+            {statusMessage.message}
+          </div>
+        )}
 
-        {/* Profile Picture Section */}
-        <div className="profile-picture-section" style={{ textAlign: 'center', marginBottom: '2rem', position: 'relative' }}>
-          <div
-            style={{
-              width: '160px',
-              height: '160px',
-              margin: '0 auto',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              position: 'relative',
-              boxShadow: '0 0 8px rgba(0,0,0,0.2)'
-            }}
-          >
-            {base64Image ? (
-              <img
-                src={base64Image}
-                alt="Profile"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            ) : (
-              <div
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  backgroundColor: '#ddd',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  fontWeight: 'bold'
-                }}
+        <div className="profile-card">
+          <h2 className="text-center">Your Profile</h2>
+
+          {/* Profile Picture Section */}
+          <div className="profile-picture-section">
+            <div className="profile-picture-container">
+              {base64Image ? (
+                <img
+                  src={base64Image}
+                  alt="Profile"
+                  className="profile-image"
+                />
+              ) : (
+                <div className="profile-initials">
+                  {getInitials()}
+                </div>
+              )}
+              <label
+                htmlFor="uploadImageInput"
+                className="profile-edit-label"
               >
-                No Image
+                <FaCamera /> Edit
+                <input
+                  id="uploadImageInput"
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={handleImageChange}
+                />
+              </label>
+            </div>
+
+            {editingImage && (
+              <div className="edit-image-buttons">
+                <button onClick={handleUploadImage}>
+                  <FaSave /> Save
+                </button>
+                <button onClick={cancelImageEdit} className="bg-secondary">
+                  <FaTimes /> Cancel
+                </button>
               </div>
             )}
-            <label
-              htmlFor="uploadImageInput"
-              style={{
-                position: 'absolute',
-                bottom: '0',
-                left: '0',
-                width: '100%',
-                background: 'rgba(0,0,0,0.6)',
-                color: '#fff',
-                textAlign: 'center',
-                padding: '0.4rem',
-                cursor: 'pointer',
-                fontSize: '0.9rem'
-              }}
-            >
-              Edit Picture
-              <input
-                id="uploadImageInput"
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={handleImageChange}
-              />
-            </label>
           </div>
-          {editingImage && (
-            <div style={{ marginTop: '1rem' }}>
-              <button className="m-2" onClick={handleUploadImage}>Save New Picture</button>
-              <button className="m-2 bg-gray" onClick={() => { setBase64Image(settings.profilePictureBase64); setEditingImage(false); }}>Cancel</button>
+
+          {/* User Information */}
+          <div className="user-info">
+            <h3 className="section-heading">Account Information</h3>
+
+            <div className="info-item">
+              <FaUser className="info-icon" />
+              <div>
+                <div className="info-label">Name</div>
+                <div className="info-value">
+                  {settings.firstName || 'N/A'} {settings.lastName || ''}
+                </div>
+              </div>
             </div>
-          )}
-        </div>
 
-        {/* Info Section */}
-        <div className="info-section" style={{ marginBottom: '2rem', textAlign: 'center' }}>
-          <p><strong>Email:</strong> {settings.loginID}</p>
-          <p><strong>First Name:</strong> {settings.firstName}</p>
-          <p><strong>Last Name:</strong> {settings.lastName}</p>
-        </div>
+            <div className="info-item">
+              <FaEnvelope className="info-icon" />
+              <div>
+                <div className="info-label">Email</div>
+                <div className="info-value">
+                  {settings.loginID || 'N/A'}
+                </div>
+              </div>
+            </div>
+          </div>
 
-        {/* Action Buttons */}
-        <div className="text-center">
-          <button className="m-2" onClick={handleChangePassword}>Change Password</button>
-          <button className="m-2 bg-red" onClick={handleDeleteAccount}>Delete Account</button>
+          {/* Action Buttons */}
+          <div className="action-buttons">
+            <button
+              onClick={handleNavigateToCookbook}
+              className="action-button accent-button"
+            >
+              <FaEdit /> My Cookbook
+            </button>
+
+            <button
+              onClick={handleChangePassword}
+              className="action-button"
+            >
+              <FaKey /> Change Password
+            </button>
+
+            <button
+              onClick={handleDeleteAccount}
+              className="action-button full-width-button cancelbtn"
+            >
+              <FaTrash /> Delete Account
+            </button>
+          </div>
         </div>
       </div>
     </div>
