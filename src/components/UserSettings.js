@@ -45,7 +45,7 @@ export const UserSettingsProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const fetchSettings = () => {
+    const fetchSettings = async () => {
       const savedSettings = localStorage.getItem('userSettings');
       if (savedSettings) {
         try {
@@ -59,6 +59,26 @@ export const UserSettingsProvider = ({ children }) => {
           };
 
           setUserSettings(settingsWithDefaults);
+
+          // Only fetch recipes if user is logged in
+          if (settingsWithDefaults.isLoggedIn && settingsWithDefaults.loginID) {
+            try {
+              // Load custom recipes
+              const recipesRes = await fetch(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/get-custom/${settingsWithDefaults.loginID}`);
+              const recipesData = await recipesRes.json();
+              setUserRecipes(recipesData);
+
+              // Load favorite recipe IDs
+              const favoritesRes = await fetch(`https://soapscores-dvbnchand2byhvhc.centralus-01.azurewebsites.net/api/recipes/favorites-full/${settingsWithDefaults.loginID}`);
+              const favoritesData = await favoritesRes.json();
+              setUserFavorites(favoritesData);
+
+              console.log('Restored user recipes and favorites after page reload');
+            } catch (fetchError) {
+              console.error('Error fetching user recipes/favorites:', fetchError);
+            }
+          }
+
           console.log('User settings loaded from localStorage', settingsWithDefaults);
         } catch (error) {
           console.error('Error parsing user settings from localStorage', error);
