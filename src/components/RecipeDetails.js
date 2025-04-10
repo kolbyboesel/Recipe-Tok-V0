@@ -59,12 +59,11 @@ const RecipeDetails = () => {
     try {
       return data ? JSON.parse(data.replace(/'/g, '"')) : fallback;
     } catch (error) {
-      // Try to parse as pipe-separated values if JSON fails
       try {
         return data ? data.split('|').filter(item => item.trim() !== '') : fallback;
       } catch (e) {
         console.error("Parse error:", e);
-        return fallback; // Return fallback if all parsing fails
+        return fallback;
       }
     }
   };

@@ -69,7 +69,7 @@ const Home = () => {
         });
 
         setFilteredRecipes(filtered);
-        setCurrentPage(1); // Reset to first page on new filters
+        setCurrentPage(1);
     }, [searchTerm, filters, sortBy, recipes]);
 
     // Pagination Logic
@@ -81,7 +81,7 @@ const Home = () => {
     const handlePageChange = (pageNum) => setCurrentPage(pageNum);
     const handleRecipesPerPageChange = (e) => {
         setRecipesPerPage(Number(e.target.value));
-        setCurrentPage(1); // reset to first page when changing page size
+        setCurrentPage(1);
     };
 
     if (isLoading) return <Spinner />;
@@ -139,7 +139,6 @@ const Home = () => {
                         </button>
 
                         {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                            // Show 5 pages max with current page in middle if possible
                             let pageNum;
                             if (totalPages <= 5) {
                                 pageNum = i + 1;
