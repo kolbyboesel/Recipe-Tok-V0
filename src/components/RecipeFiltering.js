@@ -5,7 +5,6 @@ const RecipeFiltering = ({ searchTerm, setSearchTerm, filters, setFilters, sortB
   const [showFilters, setShowFilters] = useState(false);
   const [allTags, setAllTags] = useState([]);
 
-  // Extract unique tags from all recipes
   useEffect(() => {
     const tagSet = new Set();
     recipes.forEach((recipe) => {
@@ -18,7 +17,6 @@ const RecipeFiltering = ({ searchTerm, setSearchTerm, filters, setFilters, sortB
     setAllTags(Array.from(tagSet).sort());
   }, [recipes]);
 
-  // Handle numeric filters
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({
@@ -27,20 +25,18 @@ const RecipeFiltering = ({ searchTerm, setSearchTerm, filters, setFilters, sortB
     }));
   };
 
-  // Handle tag selection
   const handleTagToggle = (tag) => {
     setFilters((prevFilters) => {
       const isSelected = prevFilters.tags.includes(tag);
       return {
         ...prevFilters,
         tags: isSelected
-          ? prevFilters.tags.filter((t) => t !== tag) // Remove tag if selected
-          : [...prevFilters.tags, tag], // Add tag if not selected
+          ? prevFilters.tags.filter((t) => t !== tag)
+          : [...prevFilters.tags, tag],
       };
     });
   };
 
-  // Reset all filters
   const resetFilters = () => {
     setFilters({
       minutes: "",
@@ -52,7 +48,6 @@ const RecipeFiltering = ({ searchTerm, setSearchTerm, filters, setFilters, sortB
     setSearchTerm("");
   };
 
-  // Function to check if any filters are active
   const hasActiveFilters = () => {
     return filters.minutes !== "" ||
       filters.numberOfSteps !== "" ||
